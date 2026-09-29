@@ -1,0 +1,10 @@
+* text=auto
+
+# Match the course's .editorconfig on Windows and on the Linux CI runner.
+*.cs text eol=crlf
+*.ps1 text eol=crlf
+*.yml text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.slnx text eol=lf
+*.csproj text eol=lf

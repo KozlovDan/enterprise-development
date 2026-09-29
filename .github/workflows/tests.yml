@@ -1,0 +1,31 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore packages
+        run: dotnet restore AutoService.slnx
+      - name: Check code formatting
+        run: dotnet format AutoService.slnx --verify-no-changes --no-restore
+      - name: Build
+        run: dotnet build AutoService.slnx --configuration Release --no-restore
+      - name: Run tests
+        run: dotnet test AutoService.slnx --configuration Release --no-build --logger "trx;LogFileName=tests.trx" --results-directory TestResults
+      - name: Save test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/*.trx
