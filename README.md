@@ -39,4 +39,3 @@
 dotnet test AutoService.slnx
 ```
 
-Тесты также выполняются автоматически в GitHub Actions при каждом push и pull request.
