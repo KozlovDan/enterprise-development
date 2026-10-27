@@ -1,6 +1,10 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/AutoService.Domain/AutoService.Domain.csproj" />
+    <Project Path="src/AutoService.Contracts/AutoService.Contracts.csproj" />
+    <Project Path="src/AutoService.Application/AutoService.Application.csproj" />
+    <Project Path="src/AutoService.Infrastructure.InMemory/AutoService.Infrastructure.InMemory.csproj" />
+    <Project Path="src/AutoService.Api/AutoService.Api.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/AutoService.Tests/AutoService.Tests.csproj" />

@@ -1,10 +1,10 @@
 namespace AutoService.Domain.Entities;
 
 /// <summary>
-/// Клиент автосервиса. Одному клиенту могут принадлежать несколько автомобилей.
+/// Клиент автосервиса.
 /// </summary>
 public class Client : Person
 {
     /// <summary>Контактный телефон с кодом страны.</summary>
-    public required string Phone { get; init; }
+    public required string Phone { get; set; }
 }

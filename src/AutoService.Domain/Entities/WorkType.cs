@@ -1,22 +1,23 @@
+using AutoService.Domain.Interfaces;
 using AutoService.Domain.Enums;
 
 namespace AutoService.Domain.Entities;
 
 /// <summary>Вид работ в прейскуранте автосервиса.</summary>
-public class WorkType
+public class WorkType : IEntity
 {
     /// <summary>Идентификатор вида работ.</summary>
-    public required int Id { get; init; }
+    public required int Id { get; set; }
 
     /// <summary>Название работы.</summary>
-    public required string Name { get; init; }
+    public required string Name { get; set; }
 
     /// <summary>Категория работы, определяющая необходимую специализацию.</summary>
-    public required Specialization Category { get; init; }
+    public required Specialization Category { get; set; }
 
     /// <summary>Стоимость одного выполнения работы в рублях.</summary>
-    public required decimal Cost { get; init; }
+    public required decimal Cost { get; set; }
 
     /// <summary>Нормативная продолжительность работы.</summary>
-    public required TimeSpan Duration { get; init; }
+    public required TimeSpan Duration { get; set; }
 }
