@@ -1,5 +1,6 @@
 using System.Globalization;
 using AutoService.Domain.Entities;
+using AutoService.Domain.Exceptions;
 using AutoService.Domain.Interfaces;
 using AutoService.Domain.Queries;
 
@@ -9,6 +10,11 @@ namespace AutoService.Infrastructure.InMemory.Repositories;
 /// <param name="orders">Начальные заказы.</param>
 public class OrderRepository(IEnumerable<Order> orders) : InMemoryRepository<Order>(orders), IOrderRepository
 {
+    /// <inheritdoc />
+    public async Task<decimal> GetTotalCostAsync(int id) =>
+        (await GetByIdAsync(id) ?? throw new EntityNotFoundException($"Запись с идентификатором {id} не найдена."))
+            .WorkTypes.Sum(work => work.Cost);
+
     /// <inheritdoc />
     public async Task<IReadOnlyList<Client>> GetClientsByMechanicAsync(int mechanicId)
     {

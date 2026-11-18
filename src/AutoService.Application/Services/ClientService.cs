@@ -36,8 +36,8 @@ public class ClientService(IAutoServiceSession session)
     /// <inheritdoc />
     protected override async Task CheckDeleteAsync(Client entity)
     {
-        if ((await Session.Cars.ExistsAsync(car => car.Owner.Id == entity.Id)) ||
-            (await Session.Orders.ExistsAsync(order => order.Client.Id == entity.Id)))
+        if ((await Session.Cars.ExistsAsync(car => car.OwnerId == entity.Id)) ||
+            (await Session.Orders.ExistsAsync(order => order.ClientId == entity.Id)))
         {
             throw new EntityConflictException("Запись используется. Сначала удалите связанные записи.");
         }
@@ -47,13 +47,13 @@ public class ClientService(IAutoServiceSession session)
     public Task<IReadOnlyList<CarDto>> GetCarsAsync(int id) => Session.ExecuteAsync<IReadOnlyList<CarDto>>(async () =>
     {
         _ = await RequireAsync(Session.Clients, id);
-        return [.. (await Session.Cars.FindAsync(car => car.Owner.Id == id)).Select(entity => entity.ToDto())];
+        return [.. (await Session.Cars.FindAsync(car => car.OwnerId == id)).Select(entity => entity.ToDto())];
     });
 
     /// <inheritdoc />
     public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Clients, id);
-        return [.. (await Session.Orders.FindAsync(order => order.Client.Id == id)).Select(entity => entity.ToDto())];
+        return [.. (await Session.Orders.FindAsync(order => order.ClientId == id)).Select(entity => entity.ToDto())];
     });
 }

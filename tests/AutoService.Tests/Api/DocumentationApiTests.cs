@@ -16,7 +16,7 @@ public class DocumentationApiTests : ApiTestBase
     [Fact]
     public async Task UnexpectedFailure_ReturnsSafeProblemDetails()
     {
-        using var factory = new WebApplicationFactory<ClientsController>()
+        using var factory = CreateFactory()
             .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
                 services.AddScoped<IClientService>(_ => throw new InvalidOperationException("internal-secret"))));
         using var client = factory.CreateClient();
@@ -77,8 +77,7 @@ public class DocumentationApiTests : ApiTestBase
     [Fact]
     public async Task Production_ExposesOnlyApi()
     {
-        using var factory = new WebApplicationFactory<ClientsController>()
-            .WithWebHostBuilder(builder => builder.UseEnvironment("Production"));
+        using var factory = CreateFactory("Production");
         using var client = factory.CreateClient();
         using var openApi = await client.GetAsync("/openapi/v1.json", cancellationToken: TestContext.Current.CancellationToken);
         using var scalar = await client.GetAsync("/scalar", cancellationToken: TestContext.Current.CancellationToken);

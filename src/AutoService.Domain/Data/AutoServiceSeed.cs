@@ -367,6 +367,10 @@ public class AutoServiceSeed
             CreateOrder(27, 2, 3, new(2026, 9, 27, 12, 0, 0, TimeSpan.Zero), [3], completed: false),
             CreateOrder(28, 3, 5, new(2026, 9, 28, 12, 0, 0, TimeSpan.Zero), [5], completed: false)
         ];
+        foreach (var car in Cars)
+        {
+            car.OwnerId = car.Owner.Id;
+        }
     }
 
     private Order CreateOrder(
@@ -384,10 +388,13 @@ public class AutoServiceSeed
         return new()
         {
             Id = id,
+            CarId = car.Id,
+            ClientId = car.Owner.Id,
+            MechanicId = mechanicId,
             Car = car,
             Client = car.Owner,
             Mechanic = Mechanics.Single(mechanic => mechanic.Id == mechanicId),
-            WorkTypes = workTypes,
+            WorkTypes = workTypes.ToList(),
             AcceptedAt = acceptedAt,
             ReturnedAt = completed ? acceptedAt + totalDuration : null
         };

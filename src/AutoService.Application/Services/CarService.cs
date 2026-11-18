@@ -33,6 +33,7 @@ public class CarService(IAutoServiceSession session, TimeProvider clock)
             Brand = request.Brand.Trim(),
             Model = request.Model.Trim(),
             ManufactureYear = request.ManufactureYear!.Value,
+            OwnerId = owner.Id,
             Owner = owner
         };
     }
@@ -44,6 +45,7 @@ public class CarService(IAutoServiceSession session, TimeProvider clock)
         target.Brand = source.Brand;
         target.Model = source.Model;
         target.ManufactureYear = source.ManufactureYear;
+        target.OwnerId = source.OwnerId;
         target.Owner = source.Owner;
     }
 
@@ -53,7 +55,7 @@ public class CarService(IAutoServiceSession session, TimeProvider clock)
     /// <inheritdoc />
     protected override async Task CheckDeleteAsync(Car entity)
     {
-        if ((await Session.Orders.ExistsAsync(order => order.Car.Id == entity.Id)))
+        if ((await Session.Orders.ExistsAsync(order => order.CarId == entity.Id)))
         {
             throw new EntityConflictException("Запись используется. Сначала удалите связанные записи.");
         }
@@ -63,8 +65,12 @@ public class CarService(IAutoServiceSession session, TimeProvider clock)
     public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Cars, id);
-        return [.. (await Session.Orders.FindAsync(order => order.Car.Id == id)).Select(entity => entity.ToDto())];
+        return [.. (await Session.Orders.FindAsync(order => order.CarId == id)).Select(entity => entity.ToDto())];
     });
     /// <inheritdoc />
-    public Task<ClientDto> GetOwnerAsync(int id) => Session.ExecuteAsync(async () => (await RequireAsync(Session.Cars, id)).Owner.ToDto());
+    public Task<ClientDto> GetOwnerAsync(int id) => Session.ExecuteAsync(async () =>
+    {
+        var car = await RequireAsync(Session.Cars, id);
+        return (await RequireAsync(Session.Clients, car.OwnerId)).ToDto();
+    });
 }

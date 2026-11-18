@@ -9,7 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../AutoService.Application/AutoService.Application.csproj" />
-    <ProjectReference Include="../AutoService.Infrastructure.InMemory/AutoService.Infrastructure.InMemory.csproj" />
+    <ProjectReference Include="../AutoService.Infrastructure.MySql/AutoService.Infrastructure.MySql.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.18.3" />
   </ItemGroup>

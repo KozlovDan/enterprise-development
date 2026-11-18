@@ -14,16 +14,16 @@ public static class DtoMapping
         Brand = entity.Brand,
         Model = entity.Model,
         ManufactureYear = entity.ManufactureYear,
-        OwnerId = entity.Owner.Id
+        OwnerId = entity.OwnerId
     };
 
     /// <summary>Преобразует запись в независимый контракт.</summary>
     public static OrderDto ToDto(this Order entity) => new()
     {
         Id = entity.Id,
-        CarId = entity.Car.Id,
-        ClientId = entity.Client.Id,
-        MechanicId = entity.Mechanic.Id,
+        CarId = entity.CarId,
+        ClientId = entity.ClientId,
+        MechanicId = entity.MechanicId,
         WorkTypeIds = [.. entity.WorkTypes.Select(work => work.Id)],
         AcceptedAt = entity.AcceptedAt,
         ReturnedAt = entity.ReturnedAt

@@ -19,6 +19,9 @@ public class Car : IEntity
     /// <summary>Год выпуска автомобиля.</summary>
     public required int ManufactureYear { get; set; }
 
+    /// <summary>Идентификатор владельца автомобиля.</summary>
+    public int OwnerId { get; set; }
+
     /// <summary>Владелец автомобиля.</summary>
     public required Client Owner { get; set; }
 }

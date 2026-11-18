@@ -1,4 +1,6 @@
 using AutoService.Domain.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,8 @@ public class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExcepti
         {
             EntityNotFoundException => (StatusCodes.Status404NotFound, "Запись не найдена"),
             DomainValidationException => (StatusCodes.Status400BadRequest, "Некорректные данные"),
+            DbUpdateException { InnerException: MySqlException { Number: 1062 or 1451 or 1452 } } =>
+                (StatusCodes.Status409Conflict, "Конфликт данных"),
             EntityConflictException => (StatusCodes.Status409Conflict, "Конфликт данных"),
             _ => (StatusCodes.Status500InternalServerError, "Внутренняя ошибка сервера")
         };
@@ -40,7 +44,9 @@ public class ApiExceptionHandler(ILogger<ApiExceptionHandler> logger) : IExcepti
         problem.Type = $"https://httpstatuses.com/{status}";
         problem.Detail = status == StatusCodes.Status500InternalServerError
             ? "Не удалось обработать запрос. Обратитесь к администратору с идентификатором запроса."
-            : exception.Message;
+            : exception is DbUpdateException
+                ? "Запись нарушает ограничение уникальности или используется связанными данными."
+                : exception.Message;
         problem.Instance = httpContext.Request.Path;
         problem.Extensions["traceId"] = httpContext.TraceIdentifier;
         httpContext.Response.StatusCode = status;

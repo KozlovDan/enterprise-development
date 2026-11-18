@@ -6,6 +6,9 @@ namespace AutoService.Domain.Interfaces;
 /// <summary>История заказов и аналитические запросы по ней.</summary>
 public interface IOrderRepository : IRepository<Order>
 {
+    /// <summary>Суммарная стоимость работ заказа, вычисленная хранилищем.</summary>
+    public Task<decimal> GetTotalCostAsync(int id);
+
     /// <summary>Клиенты механика без повторов, упорядоченные по ФИО.</summary>
     public Task<IReadOnlyList<Client>> GetClientsByMechanicAsync(int mechanicId);
 

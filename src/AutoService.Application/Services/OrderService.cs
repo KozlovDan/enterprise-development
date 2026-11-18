@@ -25,8 +25,8 @@ public class OrderService(IAutoServiceSession session)
         }
         var original = await Session.Orders.GetByIdAsync(id);
         // После продажи автомобиля клиент в истории заказа остаётся прежним.
-        var keepsCustomer = original?.Car.Id == car.Id && original.Client.Id == client.Id;
-        if (car.Owner.Id != client.Id && !keepsCustomer)
+        var keepsCustomer = original?.CarId == car.Id && original.ClientId == client.Id;
+        if (car.OwnerId != client.Id && !keepsCustomer)
         {
             throw new DomainValidationException("Новый заказ должен оформлять владелец автомобиля.");
         }
@@ -37,10 +37,13 @@ public class OrderService(IAutoServiceSession session)
         return new()
         {
             Id = id,
+            CarId = car.Id,
             Car = car,
+            ClientId = client.Id,
             Client = client,
+            MechanicId = mechanic.Id,
             Mechanic = mechanic,
-            WorkTypes = works,
+            WorkTypes = works.ToList(),
             AcceptedAt = request.AcceptedAt!.Value,
             ReturnedAt = request.ReturnedAt
         };
@@ -49,8 +52,11 @@ public class OrderService(IAutoServiceSession session)
     /// <inheritdoc />
     protected override void Copy(Order source, Order target)
     {
+        target.CarId = source.CarId;
         target.Car = source.Car;
+        target.ClientId = source.ClientId;
         target.Client = source.Client;
+        target.MechanicId = source.MechanicId;
         target.Mechanic = source.Mechanic;
         target.WorkTypes = source.WorkTypes;
         target.AcceptedAt = source.AcceptedAt;
@@ -64,18 +70,27 @@ public class OrderService(IAutoServiceSession session)
     protected override Task CheckDeleteAsync(Order entity) => Task.CompletedTask;
 
     /// <inheritdoc />
-    public Task<CarDto> GetCarAsync(int id) => Session.ExecuteAsync(async () => (await RequireAsync(Session.Orders, id)).Car.ToDto());
+    public Task<CarDto> GetCarAsync(int id) => Session.ExecuteAsync(async () =>
+    {
+        var order = await RequireAsync(Session.Orders, id);
+        return (await RequireAsync(Session.Cars, order.CarId)).ToDto();
+    });
     /// <inheritdoc />
-    public Task<ClientDto> GetClientAsync(int id) => Session.ExecuteAsync(async () => (await RequireAsync(Session.Orders, id)).Client.ToDto());
+    public Task<ClientDto> GetClientAsync(int id) => Session.ExecuteAsync(async () =>
+    {
+        var order = await RequireAsync(Session.Orders, id);
+        return (await RequireAsync(Session.Clients, order.ClientId)).ToDto();
+    });
     /// <inheritdoc />
-    public Task<MechanicDto> GetMechanicAsync(int id) => Session.ExecuteAsync(async () => (await RequireAsync(Session.Orders, id)).Mechanic.ToDto());
+    public Task<MechanicDto> GetMechanicAsync(int id) => Session.ExecuteAsync(async () =>
+    {
+        var order = await RequireAsync(Session.Orders, id);
+        return (await RequireAsync(Session.Mechanics, order.MechanicId)).ToDto();
+    });
     /// <inheritdoc />
     public Task<IReadOnlyList<WorkTypeDto>> GetWorkTypesAsync(int id) => Session.ExecuteAsync<IReadOnlyList<WorkTypeDto>>(async () =>
         [.. (await RequireAsync(Session.Orders, id)).WorkTypes.Select(work => work.ToDto())]);
     /// <inheritdoc />
     public Task<OrderCostDto> GetTotalCostAsync(int id) => Session.ExecuteAsync(async () =>
-    {
-        var order = await RequireAsync(Session.Orders, id);
-        return new OrderCostDto(order.Id, order.WorkTypes.Sum(work => work.Cost));
-    });
+        new OrderCostDto(id, await Session.Orders.GetTotalCostAsync(id)));
 }

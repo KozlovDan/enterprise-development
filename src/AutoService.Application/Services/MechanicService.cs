@@ -21,7 +21,7 @@ public class MechanicService(IAutoServiceSession session)
         {
             throw new EntityConflictException("Механик с таким паспортом уже существует.");
         }
-        if ((await Session.Orders.ExistsAsync(order => order.Mechanic.Id == id &&
+        if ((await Session.Orders.ExistsAsync(order => order.MechanicId == id &&
             order.WorkTypes.Any(work => work.Category != specialization))))
         {
             throw new EntityConflictException("Новая специализация не соответствует работам в заказах механика.");
@@ -51,7 +51,7 @@ public class MechanicService(IAutoServiceSession session)
     /// <inheritdoc />
     protected override async Task CheckDeleteAsync(Mechanic entity)
     {
-        if ((await Session.Orders.ExistsAsync(order => order.Mechanic.Id == entity.Id)))
+        if ((await Session.Orders.ExistsAsync(order => order.MechanicId == entity.Id)))
         {
             throw new EntityConflictException("Запись используется. Сначала удалите связанные записи.");
         }
@@ -61,7 +61,7 @@ public class MechanicService(IAutoServiceSession session)
     public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Mechanics, id);
-        return [.. (await Session.Orders.FindAsync(order => order.Mechanic.Id == id)).Select(entity => entity.ToDto())];
+        return [.. (await Session.Orders.FindAsync(order => order.MechanicId == id)).Select(entity => entity.ToDto())];
     });
     /// <inheritdoc />
     public Task<IReadOnlyList<ClientDto>> GetClientsAsync(int id) => Session.ExecuteAsync<IReadOnlyList<ClientDto>>(async () =>

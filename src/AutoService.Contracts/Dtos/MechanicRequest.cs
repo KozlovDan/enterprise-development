@@ -11,7 +11,7 @@ public class MechanicRequest
     public string FullName { get; init; } = string.Empty;
 
     /// <summary>Серия и номер паспорта: 0000 000000.</summary>
-    [Required, RegularExpression(@"\d{4} \d{6}")]
+    [Required, StringLength(11), RegularExpression(@"\d{4} \d{6}")]
     public string PassportNumber { get; init; } = string.Empty;
 
     /// <summary>Специализация механика.</summary>
