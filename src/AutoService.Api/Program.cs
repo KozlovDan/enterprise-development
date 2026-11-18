@@ -18,10 +18,12 @@ builder.Services.AddOpenApi(options => options.AddDocumentTransformer((document,
 }));
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
-var connection = builder.Configuration.GetConnectionString("autoservice")
-    ?? throw new InvalidOperationException("Не задана строка подключения autoservice. Запустите приложение через AppHost.");
-builder.Services.AddDbContext<AutoServiceDbContext>(options => options.UseMySQL(connection,
-    mysql => mysql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(1), [1205, 1213])));
+builder.Services.AddDbContext<AutoServiceDbContext>((services, options) =>
+{
+    var connection = services.GetRequiredService<IConfiguration>().GetConnectionString("autoservice")
+        ?? throw new InvalidOperationException("Не задана строка подключения autoservice. Запустите приложение через AppHost.");
+    options.UseMySQL(connection, mysql => mysql.EnableRetryOnFailure(3, TimeSpan.FromSeconds(1), [1205, 1213]));
+});
 builder.Services.AddScoped<IAutoServiceSession, EfAutoServiceSession>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IClientService, ClientService>();
