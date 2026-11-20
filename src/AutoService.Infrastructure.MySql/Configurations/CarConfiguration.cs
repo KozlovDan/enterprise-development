@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AutoService.Infrastructure.MySql.Configurations;
 
-/// <summary>Настройки таблицы Car.</summary>
+/// <summary>Связь автомобиля с владельцем, уникальность госномера и ограничения полей автомобиля.</summary>
 public class CarConfiguration : IEntityTypeConfiguration<Car>
 {
     /// <inheritdoc />

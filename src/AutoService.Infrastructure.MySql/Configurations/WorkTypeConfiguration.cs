@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AutoService.Infrastructure.MySql.Configurations;
 
-/// <summary>Настройки таблицы WorkType.</summary>
+/// <summary>Длина названия, точность стоимости и допустимая продолжительность вида работ.</summary>
 public class WorkTypeConfiguration : IEntityTypeConfiguration<WorkType>
 {
     /// <inheritdoc />

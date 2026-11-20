@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AutoService.Infrastructure.MySql.Configurations;
 
-/// <summary>Настройки таблицы Client.</summary>
+/// <summary>Длины ФИО и телефона клиента в таблице Clients.</summary>
 public class ClientConfiguration : IEntityTypeConfiguration<Client>
 {
     /// <inheritdoc />

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutoService.Api.Controllers;
 
 /// <summary>Сводные отчёты по заказам.</summary>
-/// <param name="service">Сервис аналитики.</param>
+/// <param name="service">Сервис отчётов по повторным обращениям клиентов и частоте видов работ.</param>
 [ApiController]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 [Route("api/analytics")]

@@ -1,10 +1,10 @@
 using AutoService.Contracts.Enums;
 namespace AutoService.Contracts.Dtos;
 
-/// <summary>Вид работ: представление записи API.</summary>
+/// <summary>Данные вида работ в ответах API.</summary>
 public class WorkTypeDto
 {
-    /// <summary>Идентификатор записи.</summary>
+    /// <summary>Идентификатор вида работ.</summary>
     public required int Id { get; init; }
 
     /// <summary>Название работы.</summary>

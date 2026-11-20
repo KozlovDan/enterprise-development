@@ -58,13 +58,13 @@ public class MechanicService(IAutoServiceSession session)
     }
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
+    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Mechanics, id);
         return [.. (await Session.Orders.FindAsync(order => order.MechanicId == id)).Select(entity => entity.ToDto())];
     });
     /// <inheritdoc />
-    public Task<IReadOnlyList<ClientDto>> GetClientsAsync(int id) => Session.ExecuteAsync<IReadOnlyList<ClientDto>>(async () =>
+    public Task<IReadOnlyList<ClientDto>> GetClientsAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<ClientDto>>(async () =>
     {
         _ = await RequireAsync(Session.Mechanics, id);
         return [.. (await Session.Orders.GetClientsByMechanicAsync(id)).Select(client => client.ToDto())];

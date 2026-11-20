@@ -7,17 +7,17 @@ public class SessionTests
 {
     /// <summary>Следующая операция ждёт, пока первая завершит асинхронную работу.</summary>
     [Fact]
-    public async Task ExecuteAsync_SerializesOperationsAcrossAwait()
+    public async Task ExecuteWriteAsync_SerializesOperationsAcrossAwait()
     {
         var session = new AutoServiceSession();
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var secondStarted = false;
-        var first = session.ExecuteAsync(async () =>
+        var first = session.ExecuteWriteAsync(async () =>
         {
             await release.Task;
             return 42;
         });
-        var second = session.ExecuteAsync(() =>
+        var second = session.ExecuteWriteAsync(() =>
         {
             secondStarted = true;
             return Task.CompletedTask;
@@ -41,13 +41,13 @@ public class SessionTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ExecuteAsync_ReleasesGateAfterFailure(bool returnsValue)
+    public async Task ExecuteWriteAsync_ReleasesGateAfterFailure(bool returnsValue)
     {
         var session = new AutoServiceSession();
 
         if (returnsValue)
         {
-            await Assert.ThrowsAsync<InvalidOperationException>(() => session.ExecuteAsync<int>(async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(() => session.ExecuteWriteAsync<int>(async () =>
             {
                 await Task.Yield();
                 throw new InvalidOperationException();
@@ -55,14 +55,14 @@ public class SessionTests
         }
         else
         {
-            await Assert.ThrowsAsync<InvalidOperationException>(() => session.ExecuteAsync(async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(() => session.ExecuteWriteAsync(async () =>
             {
                 await Task.Yield();
                 throw new InvalidOperationException();
             }));
         }
 
-        var result = await session.ExecuteAsync(() => Task.FromResult(42))
+        var result = await session.ExecuteWriteAsync(() => Task.FromResult(42))
             .WaitAsync(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken);
         Assert.Equal(42, result);
     }

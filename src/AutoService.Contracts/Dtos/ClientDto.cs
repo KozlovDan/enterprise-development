@@ -1,9 +1,9 @@
 namespace AutoService.Contracts.Dtos;
 
-/// <summary>Клиент: представление записи API.</summary>
+/// <summary>Данные клиента в ответах API.</summary>
 public class ClientDto
 {
-    /// <summary>Идентификатор записи.</summary>
+    /// <summary>Идентификатор клиента.</summary>
     public required int Id { get; init; }
 
     /// <summary>Фамилия, имя и отчество.</summary>

@@ -11,7 +11,7 @@ public class AnalyticsService(IAutoServiceSession session) : IAnalyticsService
 {
     /// <inheritdoc />
     public Task<IReadOnlyList<RepeatVisitDto>> GetRepeatVisitsAsync(DateTimeOffset reportDate) =>
-        session.ExecuteAsync<IReadOnlyList<RepeatVisitDto>>(async () =>
+        session.ExecuteReadAsync<IReadOnlyList<RepeatVisitDto>>(async () =>
         {
             if (reportDate.Year < 2000)
             {
@@ -23,7 +23,7 @@ public class AnalyticsService(IAutoServiceSession session) : IAnalyticsService
 
     /// <inheritdoc />
     public Task<IReadOnlyList<WorkFrequencyDto>> GetMostFrequentWorkTypesAsync() =>
-        session.ExecuteAsync<IReadOnlyList<WorkFrequencyDto>>(async () =>
+        session.ExecuteReadAsync<IReadOnlyList<WorkFrequencyDto>>(async () =>
             [.. (await session.Orders.GetMostFrequentWorkTypesAsync())
                 .Select(row => new WorkFrequencyDto(row.WorkTypeId, row.Count))]);
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AutoService.Infrastructure.MySql;
 
-/// <summary>Одна транзакция на проверку связей и изменение данных.</summary>
+/// <summary>Чтение без явных транзакций и изменение данных в транзакции Serializable.</summary>
 /// <param name="context">Контекст текущего HTTP-запроса.</param>
 public class EfAutoServiceSession(AutoServiceDbContext context) : IAutoServiceSession
 {
@@ -22,7 +22,11 @@ public class EfAutoServiceSession(AutoServiceDbContext context) : IAutoServiceSe
     public IOrderRepository Orders { get; } = new EfOrderRepository(context);
 
     /// <inheritdoc />
-    public Task<T> ExecuteAsync<T>(Func<Task<T>> action) => context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+    public Task<T> ExecuteReadAsync<T>(Func<Task<T>> action) =>
+        context.Database.CreateExecutionStrategy().ExecuteAsync(action);
+
+    /// <inheritdoc />
+    public Task<T> ExecuteWriteAsync<T>(Func<Task<T>> action) => context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
     {
         await using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         try
@@ -39,7 +43,7 @@ public class EfAutoServiceSession(AutoServiceDbContext context) : IAutoServiceSe
     });
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Func<Task> action) => await ExecuteAsync(async () =>
+    public async Task ExecuteWriteAsync(Func<Task> action) => await ExecuteWriteAsync(async () =>
     {
         await action();
         return true;

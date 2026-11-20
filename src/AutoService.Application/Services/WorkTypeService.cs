@@ -53,13 +53,13 @@ public class WorkTypeService(IAutoServiceSession session)
     }
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
+    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.WorkTypes, id);
         return [.. (await Session.Orders.FindAsync(order => order.WorkTypes.Any(work => work.Id == id))).Select(entity => entity.ToDto())];
     });
     /// <inheritdoc />
-    public Task<IReadOnlyList<MechanicDto>> GetMechanicsAsync(int id) => Session.ExecuteAsync<IReadOnlyList<MechanicDto>>(async () =>
+    public Task<IReadOnlyList<MechanicDto>> GetMechanicsAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<MechanicDto>>(async () =>
     {
         var work = await RequireAsync(Session.WorkTypes, id);
         return [.. (await Session.Mechanics.FindAsync(mechanic => mechanic.Specialization == work.Category))

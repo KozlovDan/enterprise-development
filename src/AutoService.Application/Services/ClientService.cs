@@ -44,14 +44,14 @@ public class ClientService(IAutoServiceSession session)
     }
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<CarDto>> GetCarsAsync(int id) => Session.ExecuteAsync<IReadOnlyList<CarDto>>(async () =>
+    public Task<IReadOnlyList<CarDto>> GetCarsAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<CarDto>>(async () =>
     {
         _ = await RequireAsync(Session.Clients, id);
         return [.. (await Session.Cars.FindAsync(car => car.OwnerId == id)).Select(entity => entity.ToDto())];
     });
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
+    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Clients, id);
         return [.. (await Session.Orders.FindAsync(order => order.ClientId == id)).Select(entity => entity.ToDto())];

@@ -21,14 +21,14 @@ public abstract class CrudService<TEntity, TRequest, TDto>(
     protected IAutoServiceSession Session { get; } = session;
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<TDto>> GetAllAsync() => Session.ExecuteAsync<IReadOnlyList<TDto>>(async () =>
+    public Task<IReadOnlyList<TDto>> GetAllAsync() => Session.ExecuteReadAsync<IReadOnlyList<TDto>>(async () =>
         [.. (await repository.GetAllAsync()).Select(ToDto)]);
 
     /// <inheritdoc />
-    public Task<TDto> GetAsync(int id) => Session.ExecuteAsync(async () => ToDto(await RequireAsync(repository, id)));
+    public Task<TDto> GetAsync(int id) => Session.ExecuteReadAsync(async () => ToDto(await RequireAsync(repository, id)));
 
     /// <inheritdoc />
-    public Task<TDto> CreateAsync(TRequest request) => Session.ExecuteAsync(async () =>
+    public Task<TDto> CreateAsync(TRequest request) => Session.ExecuteWriteAsync(async () =>
     {
         Validate(request);
         var entity = await BuildAsync(request, 0);
@@ -36,7 +36,7 @@ public abstract class CrudService<TEntity, TRequest, TDto>(
     });
 
     /// <inheritdoc />
-    public Task UpdateAsync(int id, TRequest request) => Session.ExecuteAsync(async () =>
+    public Task UpdateAsync(int id, TRequest request) => Session.ExecuteWriteAsync(async () =>
     {
         _ = await RequireAsync(repository, id);
         Validate(request);
@@ -45,7 +45,7 @@ public abstract class CrudService<TEntity, TRequest, TDto>(
     });
 
     /// <inheritdoc />
-    public Task DeleteAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task DeleteAsync(int id) => Session.ExecuteWriteAsync(async () =>
     {
         var entity = await RequireAsync(repository, id);
         await CheckDeleteAsync(entity);
@@ -61,7 +61,7 @@ public abstract class CrudService<TEntity, TRequest, TDto>(
     /// <summary>Проверяет, что удаляемая сущность не используется.</summary>
     protected abstract Task CheckDeleteAsync(TEntity entity);
 
-    /// <summary>Находит запрашиваемый ресурс или сообщает о его отсутствии.</summary>
+    /// <summary>Находит сущность по Id или выбрасывает EntityNotFoundException.</summary>
     protected static async Task<T> RequireAsync<T>(IRepository<T> source, int id) where T : class, IEntity =>
         await source.GetByIdAsync(id) ?? throw new EntityNotFoundException($"Запись с идентификатором {id} не найдена.");
 

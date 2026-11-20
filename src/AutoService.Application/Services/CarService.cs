@@ -62,13 +62,13 @@ public class CarService(IAutoServiceSession session, TimeProvider clock)
     }
 
     /// <inheritdoc />
-    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteAsync<IReadOnlyList<OrderDto>>(async () =>
+    public Task<IReadOnlyList<OrderDto>> GetOrdersAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<OrderDto>>(async () =>
     {
         _ = await RequireAsync(Session.Cars, id);
         return [.. (await Session.Orders.FindAsync(order => order.CarId == id)).Select(entity => entity.ToDto())];
     });
     /// <inheritdoc />
-    public Task<ClientDto> GetOwnerAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task<ClientDto> GetOwnerAsync(int id) => Session.ExecuteReadAsync(async () =>
     {
         var car = await RequireAsync(Session.Cars, id);
         return (await RequireAsync(Session.Clients, car.OwnerId)).ToDto();

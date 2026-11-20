@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AutoService.Infrastructure.MySql.Configurations;
 
-/// <summary>Настройки таблицы Mechanic.</summary>
+/// <summary>Уникальность паспорта, допустимые специализации и стаж механика.</summary>
 public class MechanicConfiguration : IEntityTypeConfiguration<Mechanic>
 {
     /// <inheritdoc />

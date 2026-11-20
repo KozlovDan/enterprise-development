@@ -70,27 +70,27 @@ public class OrderService(IAutoServiceSession session)
     protected override Task CheckDeleteAsync(Order entity) => Task.CompletedTask;
 
     /// <inheritdoc />
-    public Task<CarDto> GetCarAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task<CarDto> GetCarAsync(int id) => Session.ExecuteReadAsync(async () =>
     {
         var order = await RequireAsync(Session.Orders, id);
         return (await RequireAsync(Session.Cars, order.CarId)).ToDto();
     });
     /// <inheritdoc />
-    public Task<ClientDto> GetClientAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task<ClientDto> GetClientAsync(int id) => Session.ExecuteReadAsync(async () =>
     {
         var order = await RequireAsync(Session.Orders, id);
         return (await RequireAsync(Session.Clients, order.ClientId)).ToDto();
     });
     /// <inheritdoc />
-    public Task<MechanicDto> GetMechanicAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task<MechanicDto> GetMechanicAsync(int id) => Session.ExecuteReadAsync(async () =>
     {
         var order = await RequireAsync(Session.Orders, id);
         return (await RequireAsync(Session.Mechanics, order.MechanicId)).ToDto();
     });
     /// <inheritdoc />
-    public Task<IReadOnlyList<WorkTypeDto>> GetWorkTypesAsync(int id) => Session.ExecuteAsync<IReadOnlyList<WorkTypeDto>>(async () =>
+    public Task<IReadOnlyList<WorkTypeDto>> GetWorkTypesAsync(int id) => Session.ExecuteReadAsync<IReadOnlyList<WorkTypeDto>>(async () =>
         [.. (await RequireAsync(Session.Orders, id)).WorkTypes.Select(work => work.ToDto())]);
     /// <inheritdoc />
-    public Task<OrderCostDto> GetTotalCostAsync(int id) => Session.ExecuteAsync(async () =>
+    public Task<OrderCostDto> GetTotalCostAsync(int id) => Session.ExecuteReadAsync(async () =>
         new OrderCostDto(id, await Session.Orders.GetTotalCostAsync(id)));
 }

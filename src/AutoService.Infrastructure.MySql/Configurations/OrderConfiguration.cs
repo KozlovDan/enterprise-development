@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AutoService.Infrastructure.MySql.Configurations;
 
-/// <summary>Настройки таблицы Order.</summary>
+/// <summary>Связи заказа с автомобилем, клиентом, механиком и работами, хранение дат в UTC.</summary>
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
     /// <inheritdoc />

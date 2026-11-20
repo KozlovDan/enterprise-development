@@ -5,24 +5,27 @@ using Microsoft.AspNetCore.Mvc;
 namespace AutoService.Api.Controllers;
 
 /// <summary>Автомобили автосервиса.</summary>
-/// <param name="service">Сервис ресурса.</param>
+/// <param name="service">Сервис автомобилей, их владельцев и заказов.</param>
 [ApiController]
 [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")]
 [Route("api/cars")]
 public class CarsController(ICarService service) : ControllerBase
 {
-    /// <summary>Возвращает все записи.</summary>
+    /// <summary>Возвращает список автомобилей автосервиса.</summary>
     [HttpGet]
     [ProducesResponseType<IReadOnlyList<CarDto>>(StatusCodes.Status200OK, "application/json")]
     public async Task<ActionResult<IReadOnlyList<CarDto>>> GetAll() => Ok(await service.GetAllAsync());
 
-    /// <summary>Возвращает запись по идентификатору.</summary>
+    /// <summary>Возвращает автомобиль по его идентификатору.</summary>
+    /// <param name="id">Идентификатор автомобиля.</param>
     [HttpGet("{id:int}")]
     [ProducesResponseType<CarDto>(StatusCodes.Status200OK, "application/json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
     public async Task<ActionResult<CarDto>> Get(int id) => Ok(await service.GetAsync(id));
 
-    /// <summary>Создаёт запись и возвращает ссылку на неё в заголовке Location.</summary>
+    /// <summary>Добавляет автомобиль с указанным владельцем.</summary>
+    /// <remarks>Заголовок Location содержит URL чтения добавленного автомобиля: /api/cars/{id}.</remarks>
+    /// <param name="request">Госномер, марка, модель, год выпуска и идентификатор владельца автомобиля.</param>
     [HttpPost]
     [ProducesResponseType<CarDto>(StatusCodes.Status201Created, "application/json")]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
@@ -33,7 +36,9 @@ public class CarsController(ICarService service) : ControllerBase
         return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
 
-    /// <summary>Полностью обновляет существующую запись.</summary>
+    /// <summary>Обновляет госномер, марку, модель, год выпуска и владельца автомобиля.</summary>
+    /// <param name="id">Идентификатор автомобиля.</param>
+    /// <param name="request">Госномер, марка, модель, год выпуска и идентификатор владельца автомобиля.</param>
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
@@ -45,7 +50,8 @@ public class CarsController(ICarService service) : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Удаляет запись, если её не используют связанные ресурсы.</summary>
+    /// <summary>Удаляет автомобиль, если для него нет заказов.</summary>
+    /// <param name="id">Идентификатор автомобиля.</param>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
@@ -57,12 +63,14 @@ public class CarsController(ICarService service) : ControllerBase
     }
 
     /// <summary>Владелец автомобиля.</summary>
+    /// <param name="id">Идентификатор автомобиля.</param>
     [HttpGet("{id:int}/owner")]
     [ProducesResponseType<ClientDto>(StatusCodes.Status200OK, "application/json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
     public async Task<ActionResult<ClientDto>> GetOwner(int id) => Ok(await service.GetOwnerAsync(id));
 
     /// <summary>Заказы автомобиля.</summary>
+    /// <param name="id">Идентификатор автомобиля.</param>
     [HttpGet("{id:int}/orders")]
     [ProducesResponseType<IReadOnlyList<OrderDto>>(StatusCodes.Status200OK, "application/json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]

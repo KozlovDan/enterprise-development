@@ -1,9 +1,9 @@
 namespace AutoService.Contracts.Dtos;
 
-/// <summary>Заказ: представление записи API.</summary>
+/// <summary>Данные заказа в ответах API.</summary>
 public class OrderDto
 {
-    /// <summary>Идентификатор записи.</summary>
+    /// <summary>Идентификатор заказа.</summary>
     public required int Id { get; init; }
 
     /// <summary>Идентификатор автомобиля.</summary>

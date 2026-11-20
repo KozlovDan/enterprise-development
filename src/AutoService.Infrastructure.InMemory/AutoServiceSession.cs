@@ -33,7 +33,10 @@ public class AutoServiceSession : IAutoServiceSession
     public IOrderRepository Orders { get; }
 
     /// <inheritdoc />
-    public async Task<T> ExecuteAsync<T>(Func<Task<T>> action)
+    public Task<T> ExecuteReadAsync<T>(Func<Task<T>> action) => ExecuteWriteAsync(action);
+
+    /// <inheritdoc />
+    public async Task<T> ExecuteWriteAsync<T>(Func<Task<T>> action)
     {
         // Блокировка охватывает всю операцию, в том числе асинхронные ожидания.
         await _gate.WaitAsync();
@@ -48,7 +51,7 @@ public class AutoServiceSession : IAutoServiceSession
     }
 
     /// <inheritdoc />
-    public async Task ExecuteAsync(Func<Task> action)
+    public async Task ExecuteWriteAsync(Func<Task> action)
     {
         await _gate.WaitAsync();
         try

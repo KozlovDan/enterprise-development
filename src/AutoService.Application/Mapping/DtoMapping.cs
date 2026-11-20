@@ -6,7 +6,7 @@ namespace AutoService.Application.Mapping;
 /// <summary>Преобразования сущностей в контракты API.</summary>
 public static class DtoMapping
 {
-    /// <summary>Преобразует запись в независимый контракт.</summary>
+    /// <summary>Возвращает DTO автомобиля с идентификатором владельца.</summary>
     public static CarDto ToDto(this Car entity) => new()
     {
         Id = entity.Id,
@@ -17,7 +17,7 @@ public static class DtoMapping
         OwnerId = entity.OwnerId
     };
 
-    /// <summary>Преобразует запись в независимый контракт.</summary>
+    /// <summary>Возвращает DTO заказа с идентификаторами автомобиля, клиента, механика и работ.</summary>
     public static OrderDto ToDto(this Order entity) => new()
     {
         Id = entity.Id,
@@ -29,7 +29,7 @@ public static class DtoMapping
         ReturnedAt = entity.ReturnedAt
     };
 
-    /// <summary>Преобразует запись в независимый контракт.</summary>
+    /// <summary>Возвращает DTO вида работ с продолжительностью в минутах.</summary>
     public static WorkTypeDto ToDto(this WorkType entity) => new()
     {
         Id = entity.Id,
@@ -39,7 +39,7 @@ public static class DtoMapping
         DurationMinutes = (int)entity.Duration.TotalMinutes
     };
 
-    /// <summary>Преобразует запись в независимый контракт.</summary>
+    /// <summary>Возвращает DTO механика с паспортом, специализацией и стажем.</summary>
     public static MechanicDto ToDto(this Mechanic entity) => new()
     {
         Id = entity.Id,
@@ -49,7 +49,7 @@ public static class DtoMapping
         ExperienceYears = entity.ExperienceYears
     };
 
-    /// <summary>Преобразует запись в независимый контракт.</summary>
+    /// <summary>Возвращает DTO клиента с ФИО и телефоном.</summary>
     public static ClientDto ToDto(this Client entity) => new()
     {
         Id = entity.Id,

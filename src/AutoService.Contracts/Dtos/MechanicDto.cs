@@ -1,10 +1,10 @@
 using AutoService.Contracts.Enums;
 namespace AutoService.Contracts.Dtos;
 
-/// <summary>Механик: представление записи API.</summary>
+/// <summary>Данные механика в ответах API.</summary>
 public class MechanicDto
 {
-    /// <summary>Идентификатор записи.</summary>
+    /// <summary>Идентификатор механика.</summary>
     public required int Id { get; init; }
 
     /// <summary>Фамилия, имя и отчество.</summary>

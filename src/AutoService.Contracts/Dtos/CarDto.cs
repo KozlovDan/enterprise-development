@@ -1,9 +1,9 @@
 namespace AutoService.Contracts.Dtos;
 
-/// <summary>Автомобиль: представление записи API.</summary>
+/// <summary>Данные автомобиля в ответах API.</summary>
 public class CarDto
 {
-    /// <summary>Идентификатор записи.</summary>
+    /// <summary>Идентификатор автомобиля.</summary>
     public required int Id { get; init; }
 
     /// <summary>Государственный регистрационный номер.</summary>

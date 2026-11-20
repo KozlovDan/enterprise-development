@@ -1,5 +1,6 @@
 using AutoService.Infrastructure.MySql;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using MySql.Data.MySqlClient;
 
 namespace AutoService.Tests.Fixtures;
@@ -25,8 +26,9 @@ public sealed class MySqlTestDatabase : IAsyncDisposable
     }
 
     /// <summary>Новый контекст, не разделяющий отслеживаемые объекты с сервером.</summary>
-    public AutoServiceDbContext CreateContext() =>
-        new(new DbContextOptionsBuilder<AutoServiceDbContext>().UseMySQL(ConnectionString).Options);
+    public AutoServiceDbContext CreateContext(params IInterceptor[] interceptors) =>
+        new(new DbContextOptionsBuilder<AutoServiceDbContext>().UseMySQL(ConnectionString)
+            .AddInterceptors(interceptors).Options);
 
     /// <summary>Создаёт таблицы и начальные данные настоящими миграциями.</summary>
     public async Task InitializeAsync()

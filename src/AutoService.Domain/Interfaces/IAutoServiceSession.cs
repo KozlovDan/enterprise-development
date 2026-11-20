@@ -2,7 +2,7 @@ using AutoService.Domain.Entities;
 
 namespace AutoService.Domain.Interfaces;
 
-/// <summary>Согласованный доступ к связанным коллекциям автосервиса.</summary>
+/// <summary>Репозитории автосервиса и выполнение операций чтения и изменения данных.</summary>
 public interface IAutoServiceSession
 {
     /// <summary>Клиенты.</summary>
@@ -15,9 +15,12 @@ public interface IAutoServiceSession
     public IRepository<WorkType> WorkTypes { get; }
     /// <summary>Заказы.</summary>
     public IOrderRepository Orders { get; }
-    /// <summary>Выполняет операцию целиком, включая проверку связей и формирование результата.</summary>
-    public Task<T> ExecuteAsync<T>(Func<Task<T>> action);
+    /// <summary>Выполняет запросы и формирует ответ без открытия транзакции базы данных.</summary>
+    public Task<T> ExecuteReadAsync<T>(Func<Task<T>> action);
 
-    /// <summary>Выполняет изменение связанных данных как одну операцию.</summary>
-    public Task ExecuteAsync(Func<Task> action);
+    /// <summary>Выполняет проверку связей и изменение данных атомарно, возвращая результат операции.</summary>
+    public Task<T> ExecuteWriteAsync<T>(Func<Task<T>> action);
+
+    /// <summary>Выполняет проверку связей и изменение данных атомарно, без возвращаемого результата.</summary>
+    public Task ExecuteWriteAsync(Func<Task> action);
 }
